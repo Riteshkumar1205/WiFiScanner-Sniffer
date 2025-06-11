@@ -5,7 +5,7 @@ import time
 import os
 
 # Initialize access point table
-access_points = pd.DataFrame(columns=["SSID", "Signal(dBm)", "Channel", "Security"])
+access_points = pd.DataFrame(columns=["BSSID","SSID", "Signal(dBm)", "Channel", "Security"])
 access_points.set_index("BSSID", inplace=True)
 
 # Interface name (must be in monitor mode)
