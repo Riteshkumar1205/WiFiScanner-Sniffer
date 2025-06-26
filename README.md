@@ -33,29 +33,27 @@ Verifying router visibility and encryption types
 ## 🐧 Linux (Kali, Ubuntu)
 **Enable monitor mode:**
 
-bash
-**sudo airmon-ng start wlan0**
+~~~
+sudo airmon-ng start wlan0
 Replace wlan0 with your adapter name (check with iwconfig or ip a).
 
 Run the scanner:
 
-bash
 
-**python3 wifiscanner_scapy.py**
+python3 wifiscanner_scapy.py
+~~~
+
 ## 🍏 macOS
 
 **Monitor mode support depends on your chipset and drivers. This tool is tested primarily on Linux.**
-
-**📁 Clone the Repository**
-bash
-
+~~~
 git clone https://github.com/RiteshKumar/WiFiScanner-Visualizer.git
 cd WiFiScanner-Visualizer
-
+~~~
 ## 📄 License & Ethical Use
 **This project is licensed under the MIT License, which permits personal, academic, and commercial use with proper attribution.**
 
-**🚨 Important Notice**
+## 🚨 Important Notice**
 This tool is intended for ethical and educational use only.
 You must not use it for:
 
