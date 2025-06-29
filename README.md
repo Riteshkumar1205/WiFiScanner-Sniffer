@@ -1,69 +1,102 @@
-## 📌 Description
-**WiFiScanner-Visualizer is a lightweight, Python-based terminal tool designed to passively monitor and visualize nearby wireless networks. Built using the Scapy library, it listens for 802.11 beacon frames and extracts live information such as:**
+## 📡 Real-Time WiFiScanner-Sniffer (Windows & Linux)
 
-📶 SSID (Network Name)
+**WiFiScanner-Sniffer** is a Python-based wireless network monitoring tool that passively discovers nearby WiFi networks in real-time.
 
-📡 Signal Strength (dBm)
+This lightweight, cross-platform application displays live SSID details, signal strength, operating channels, and encryption protocols — all from the comfort of a GUI (on Windows) or terminal (on Linux).  
+It’s an educational and practical tool for WiFi troubleshooting, ethical reconnaissance, and signal analysis.
 
-📻 Operating Channel
+## ✅ Works on Windows & Linux (Kali, Ubuntu, Debian)
 
-## 🔐 Security Protocol (e.g., WPA2, WEP)
+✅ Cross-platform: Windows (GUI) & Linux (monitor mode via `scapy`)  
+📶 Real-time SSID, BSSID, signal strength, and channel mapping  
+🖥️ Windows GUI using `tkinter`, `netsh`, and `pandas` (no root needed)  
+🐧 Passive sniffing on Linux using `scapy` (requires monitor mode)  
+🔒 Strictly passive – no packet injection, no unauthorized probing  
+👩‍💻 Ideal for students, ethical hackers, wireless researchers, and trainers
 
-This tool helps users analyze the wireless environment, detect overlapping channels, and assess signal quality — which is especially useful for home network optimization, classroom demonstrations, and WiFi research.
+---
 
-## ⚠️ Important:
-This tool does not perform any packet injection, cracking, or unauthorized access. It operates passively, capturing only broadcasted management frames (beacons). Use it only on networks you own or have explicit permission to monitor.
+## 🖥️ How to Use on Different OS
 
-## ✅ Use Cases
-Troubleshooting weak WiFi coverage
+### 🪟 Windows (No Monitor Mode Required)
 
-Classroom demonstrations on wireless signals
+1. Open **Command Prompt** or **PowerShell**.
+2. Run:
+   ~~~bash
+   git clone https://github.com/Riteshkumar1205/WiFiScanner-Sniffer.git
+   cd WiFiScanner-Sniffer
+   
+   python -m venv venv
+   venv\Scripts\activate
+   
+   pip install pandas nltk
+   python python wifiscanner_scapy.py
+   ~~~
+3. A GUI will launch showing all visible WiFi networks with live signal updates.
 
-Detecting crowded or overlapping WiFi channels
+---
 
-Basic wireless reconnaissance (within legal/ethical boundaries)
+### 🐧 Linux (Kali/Ubuntu/Debian — Requires Monitor Mode)
 
-Verifying router visibility and encryption types
+1. Open a Terminal.
+2. Run:
+   ~~~bash
+   sudo apt update && sudo apt install git python3-pip aircrack-ng -y
+   git clone https://github.com/Riteshkumar1205/WiFiScanner-Sniffer.git
+   cd WiFiScanner-Sniffer
+   
+   pip3 install scapy pandas
+   
+   sudo airmon-ng start wlan0   # Replace wlan0 with your interface
+   ~~~
+   ## Run
+   ~~~ 
+   python3 wifiscanner_scapy.py
+   ~~~
+4. The terminal will display beacon frame data from surrounding WiFi networks.
+
+---
+
+## 📋 Features Overview
+
+  | Feature              |     Windows GUI    |      Linux CLI   |
+  |----------------------|--------------------|------------------|
+  | SSID/BSSID Display   | ✅                 | ✅              |
+  | Channel Mapping      | ✅                 | ✅              |
+  | Signal Strength      | ✅                 | ✅              |
+  | Encryption Detection | ✅                 | ✅              |
+  | Monitor Mode Needed  | ❌                 | ✅              |
+  | Internet Required    | ❌ (after install) | ❌ (after install) |
+
+---
+
+## 📄 License and Responsible Use
+
+### 🔖 License
+
+**This project is released under the MIT License**, a permissive open-source license that allows:
+
+✔️ Personal, academic, or commercial use  
+✔️ Modification and redistribution of the source code  
+✔️ Integration into larger applications or teaching modules  
 
 
+## 🧭 Ethical and Legal Use Policy
 
-## 💻 How to Use
-**⚠️ Interface must be in monitor mode for the tool to function properly.**
+WiFiScanner-Sniffer is strictly intended for ethical, educational, and authorized wireless analysis.  
+By using this tool, you agree to the following terms:
 
-## 🐧 Linux (Kali, Ubuntu)
-**Enable monitor mode:**
+- ❌ You will **not** use this tool to scan networks you do not own or explicitly control.
+- ✅ You will **only** use this on devices or environments where you have permission.
+- ⚖️ You agree to comply with all **applicable cybersecurity, privacy, and data laws** in your region.
+- ❗ The developer assumes **no responsibility** for any misuse, abuse, or illegal deployment of this software.
 
-~~~
-sudo airmon-ng start wlan0
-Replace wlan0 with your adapter name (check with iwconfig or ip a).
+> ⚠️ This is a **passive educational tool**. It does **not** crack, inject, or interfere with wireless signals.
 
-Run the scanner:
-
-
-python3 wifiscanner_scapy.py
-~~~
-
-## 🍏 macOS
-
-**Monitor mode support depends on your chipset and drivers. This tool is tested primarily on Linux.**
-~~~
-git clone https://github.com/RiteshKumar/WiFiScanner-Visualizer.git
-cd WiFiScanner-Visualizer
-~~~
-## 📄 License & Ethical Use
-**This project is licensed under the MIT License, which permits personal, academic, and commercial use with proper attribution.**
-
-## 🚨 Important Notice**
-This tool is intended for ethical and educational use only.
-You must not use it for:
-
-Scanning networks you do not own or lack permission to analyze
-
-Performing any kind of unauthorized surveillance
-
-Violating any applicable laws or institutional policies
-
-Always ensure that your activities comply with local cybersecurity laws, ethical standards, and privacy regulations.
+---
 
 
+## 🧪 Final Note
+
+**WiFiScanner-Sniffer is a learning-oriented, ethical tool — built with care to help others understand wireless environments safely. Use it wisely, share it responsibly, and never stop exploring the wireless world around you.**
 
