@@ -1,53 +1,75 @@
 import subprocess
 import pandas as pd
-import os
-import time
 import re
-from threading import Thread
+import time
+import tkinter as tk
+from tkinter import ttk
+import nltk
+from nltk.corpus import stopwords
+import threading
 
-# DataFrame to store Access Point info
-access_points = pd.DataFrame(columns=["SSID", "BSSID", "Signal (%)", "Channel", "Security"])
+# Ensure nltk data is downloaded
+nltk.download('stopwords', quiet=True)
+stop_words = set(stopwords.words('english'))
 
-def parse_netsh_output():
-    """Parse output from netsh wlan show networks mode=bssid"""
+# WiFi DataFrame
+access_points = pd.DataFrame(columns=["SSID", "BSSID", "Signal", "Channel", "Security"])
+
+def clean_ssid(ssid):
+    """Filter out stopwords from SSID names."""
+    words = ssid.split()
+    filtered = [word for word in words if word.lower() not in stop_words]
+    return ' '.join(filtered)
+
+def scan_wifi():
+    """Scan nearby WiFi networks using netsh."""
     try:
         output = subprocess.check_output("netsh wlan show networks mode=bssid", shell=True, encoding='utf-8', errors='ignore')
     except Exception as e:
-        print(f"Error running netsh: {e}")
+        print(f"[ERROR] {e}")
         return
 
     ssid, security = None, None
-    ap_list = []
+    results = []
 
     for line in output.splitlines():
         line = line.strip()
-
         if line.startswith("SSID "):
-            ssid_match = re.match(r"SSID \d+ : (.*)", line)
-            ssid = ssid_match.group(1) if ssid_match else "<Hidden>"
-
+            match = re.match(r"SSID \d+ : (.*)", line)
+            ssid = match.group(1) if match else "<Hidden>"
+            ssid = clean_ssid(ssid)
         elif line.startswith("Authentication"):
             security = line.split(":", 1)[1].strip()
-
         elif line.startswith("BSSID"):
             bssid = line.split(":", 1)[1].strip()
         elif line.startswith("Signal"):
             signal = line.split(":", 1)[1].strip()
         elif line.startswith("Channel"):
             channel = line.split(":", 1)[1].strip()
-            # Append only after collecting full AP block
-            ap_list.append((ssid, bssid, signal, channel, security))
+            results.append((ssid, bssid, signal, channel, security))
 
-    # Update DataFrame
     global access_points
-    access_points = pd.DataFrame(ap_list, columns=["SSID", "BSSID", "Signal (%)", "Channel", "Security"])
+    access_points = pd.DataFrame(results, columns=["SSID", "BSSID", "Signal", "Channel", "Security"])
     access_points.set_index("BSSID", inplace=True)
 
-def print_all():
-    """Continuously print updated WiFi info"""
+def update_table():
+    """Update the tkinter table every few seconds."""
     while True:
-        os.system("cls" if os.name == "nt" else "clear")
-        print(r'''
+        scan_wifi()
+        for item in tree.get_children():
+            tree.delete(item)
+        for idx, row in access_points.iterrows():
+            tree.insert("", "end", values=(row["SSID"], idx, row["Signal"], row["Channel"], row["Security"]))
+        time.sleep(5)
+
+# GUI Setup
+root = tk.Tk()
+root.title("WiFi Network Scanner (Windows)")
+root.geometry("1000x500")
+root.resizable(False, False)
+
+# ASCII Banner at the top
+banner = r'''
 ╭────────────────────────────────────────────────────────────────────────────╮
 │ ██╗    ██╗██╗███████╗██╗    ███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗     │
 │ ██║    ██║██║██╔════╝██║    ██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║     │
@@ -56,18 +78,22 @@ def print_all():
 │ ╚███╔███╔╝██║██║     ██║    ███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║     │
 │  ╚══╝╚══╝ ╚═╝╚═╝     ╚═╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝     │
 ├────────────────────────── Author: ManuA | Version: 1.0 ─────────────────────┤
-''')
-        parse_netsh_output()
-        with pd.option_context('display.max_rows', 20, 'display.max_columns', None):
-            print(access_points.sort_values(by="Signal (%)", ascending=False))
-        print("\n[CTRL+C to stop scanning]")
-        time.sleep(3)
+'''
+label_banner = tk.Label(root, text=banner, font=("Courier", 9), justify="left", fg="green", bg="black")
+label_banner.pack(padx=10, pady=5, fill=tk.X)
 
-if __name__ == "__main__":
-    print("[*] Scanning for WiFi networks using netsh (Windows)...")
-    try:
-        Thread(target=print_all, daemon=True).start()
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\n[!] Scan stopped by user.")
+# Table for displaying APs
+columns = ("SSID", "BSSID", "Signal", "Channel", "Security")
+tree = ttk.Treeview(root, columns=columns, show="headings")
+
+for col in columns:
+    tree.heading(col, text=col)
+    tree.column(col, width=180 if col == "BSSID" else 120)
+
+tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
+# Launch background thread
+threading.Thread(target=update_table, daemon=True).start()
+
+# Start GUI loop
+root.mainloop()
